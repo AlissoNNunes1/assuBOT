@@ -1,6 +1,8 @@
+//main.js
+
 const { Client, LocalAuth , MessageType } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
-const { setReminder, createPoll, getWeather, getNews, translateText } = require('./utils');
+const { setReminder, createPoll, getWeather, getNews, translateText,convertCurrency,searchBook,searchMovie,generateMeme  } = require('./utils');
 const { kickUser, promoteUser, demoteUser } = require('./adm');
 const { sendHelpMessage } = require('./help');
 const { getAnimeInfo, getRandomAnime, getCharacterInfo,identifyAnime,getRandomCharacter } = require('./anime');
@@ -25,7 +27,7 @@ client.on('ready', () => {
 
 client.on('message', async (msg) => {
     // Responder a '!ping'
-    console.log(msg.body);
+    
     if (msg.body === '!ping') {
         msg.reply('pong');
     }
@@ -91,6 +93,29 @@ client.on('message', async (msg) => {
         const [text, targetLang] = msg.body.split(' ').slice(1);
         await translateText(msg, text, targetLang);
     }
+    // Comando !currency
+    if (msg.body.startsWith('!currency ')) {
+        const [amount, from, to] = msg.body.split(' ').slice(1);
+        await convertCurrency(msg, amount, from, to);
+    }
+    // Comando !book
+    if (msg.body.startsWith('!book ')) {
+        const bookName = msg.body.split(' ').slice(1).join(' ');
+        await searchBook(msg, bookName);
+    }
+    // Comando !movie
+    if (msg.body.startsWith('!movie ')) {
+        const movieName = msg.body.split(' ').slice(1).join(' ');
+        await searchMovie(msg, movieName);
+    }
+    // Comando !meme
+if (msg.body.startsWith('!meme')) {
+    const parts = msg.body.split(' ');
+    const template = parts[1];
+    const topText = parts[2];
+    const bottomText = parts[3];
+    await generateMeme(msg, template, topText, bottomText);
+}
     // Comandos exclusivos para administradores
     if (msg.body.startsWith('!kick ')) {
       await kickUser(msg);

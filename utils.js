@@ -1,15 +1,16 @@
-// utils.js
 const fs = require('fs');
+const fetch = require('node-fetch');
 const { MessageType } = require('whatsapp-web.js');
 
-//comando !reminder
+// Comando !reminder
 const setReminder = async (msg, time, reminderText) => {
     setTimeout(() => {
         msg.reply(`Lembrete: ${reminderText}`);
     }, parseInt(time) * 1000); // Tempo em segundos
     msg.reply(`Lembrete definido para ${time} segundos.`);
 };
-//comando !poll
+
+// Comando !poll
 const createPoll = (msg, question, options) => {
     let pollText = `Enquete: ${question}\n`;
     options.forEach((option, index) => {
@@ -17,6 +18,7 @@ const createPoll = (msg, question, options) => {
     });
     msg.reply(pollText);
 };
+
 // Comando !weather
 const getWeather = async (msg, location) => {
     try {
@@ -74,6 +76,7 @@ const translateText = async (msg, text, targetLang) => {
         msg.reply('Ocorreu um erro ao traduzir o texto. Por favor, tente novamente mais tarde.');
     }
 };
+
 // Comando !currency
 const convertCurrency = async (msg, amount, fromCurrency, toCurrency) => {
     try {
@@ -89,43 +92,46 @@ const convertCurrency = async (msg, amount, fromCurrency, toCurrency) => {
     } catch (error) {
         console.error('Erro ao converter moeda:', error);
         msg.reply('Ocorreu um erro ao converter a moeda. Por favor, tente novamente mais tarde.');
-    };
+    }
+};
+
 // Comando !movie
 const searchMovie = async (msg, movieName) => {
-        try {
-            const response = await fetch(`http://www.omdbapi.com/?t=${encodeURIComponent(movieName)}&apikey=YOUR_API_KEY`);
-            const data = await response.json();
-    
-            if (data.Response === 'True') {
-                const movieInfo = `Título: ${data.Title}\nAno: ${data.Year}\nGênero: ${data.Genre}\nSinopse: ${data.Plot}\nAvaliação: ${data.imdbRating}\nMais informações: ${data.imdbID}`;
-                msg.reply(movieInfo);
-            } else {
-                msg.reply('Filme não encontrado.');
-            }
-        } catch (error) {
-            console.error('Erro ao buscar filme:', error);
-            msg.reply('Ocorreu um erro ao buscar o filme. Por favor, tente novamente mais tarde.');
+    try {
+        const response = await fetch(`http://www.omdbapi.com/?t=${encodeURIComponent(movieName)}&apikey=YOUR_API_KEY`);
+        const data = await response.json();
+
+        if (data.Response === 'True') {
+            const movieInfo = `Título: ${data.Title}\nAno: ${data.Year}\nGênero: ${data.Genre}\nSinopse: ${data.Plot}\nAvaliação: ${data.imdbRating}\nMais informações: ${data.imdbID}`;
+            msg.reply(movieInfo);
+        } else {
+            msg.reply('Filme não encontrado.');
         }
-    };
+    } catch (error) {
+        console.error('Erro ao buscar filme:', error);
+        msg.reply('Ocorreu um erro ao buscar o filme. Por favor, tente novamente mais tarde.');
+    }
+};
+
 // Comando !book
 const searchBook = async (msg, bookName) => {
-        try {
-            const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(bookName)}&key=YOUR_API_KEY`);
-            const data = await response.json();
-    
-            if (data.items && data.items.length > 0) {
-                const book = data.items[0].volumeInfo;
-                const bookInfo = `Título: ${book.title}\nAutor(es): ${book.authors.join(', ')}\nPublicado em: ${book.publishedDate}\nSinopse: ${book.description}\nMais informações: ${book.infoLink}`;
-                msg.reply(bookInfo);
-            } else {
-                msg.reply('Livro não encontrado.');
-            }
-        } catch (error) {
-            console.error('Erro ao buscar livro:', error);
-            msg.reply('Ocorreu um erro ao buscar o livro. Por favor, tente novamente mais tarde.');
+    try {
+        const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(bookName)}&key=YOUR_API_KEY`);
+        const data = await response.json();
+
+        if (data.items && data.items.length > 0) {
+            const book = data.items[0].volumeInfo;
+            const bookInfo = `Título: ${book.title}\nAutor(es): ${book.authors.join(', ')}\nPublicado em: ${book.publishedDate}\nSinopse: ${book.description}\nMais informações: ${book.infoLink}`;
+            msg.reply(bookInfo);
+        } else {
+            msg.reply('Livro não encontrado.');
         }
-    };
+    } catch (error) {
+        console.error('Erro ao buscar livro:', error);
+        msg.reply('Ocorreu um erro ao buscar o livro. Por favor, tente novamente mais tarde.');
+    }
 };
+
 // Comando !meme    
 const generateMeme = async (msg, template, topText, bottomText) => {
     try {
